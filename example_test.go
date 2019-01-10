@@ -12,7 +12,7 @@ import (
 // no way to retrieve other fields after parsing.
 // See the CustomClaimsType example for intended usage.
 func ExampleNewWithClaims_standardClaims() {
-	mySigningKey := []byte("AllYourBase")
+	mySigningKey := []byte("AllYourBase")  //签名秘钥转换成字节切片的形式
 
 	// Create the Claims
 	claims := &jwt.StandardClaims{

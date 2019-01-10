@@ -18,12 +18,12 @@ const (
 	ValidationErrorSignatureInvalid                    // Signature validation failed
 
 	// Standard Claim validation errors
-	ValidationErrorAudience      // AUD validation failed
-	ValidationErrorExpired       // EXP validation failed
-	ValidationErrorIssuedAt      // IAT validation failed
-	ValidationErrorIssuer        // ISS validation failed
-	ValidationErrorNotValidYet   // NBF validation failed
-	ValidationErrorId            // JTI validation failed
+	ValidationErrorAudience      // AUD validation failed  Audience验证失败
+	ValidationErrorExpired       // EXP validation failed  过期时间验证失败
+	ValidationErrorIssuedAt      // IAT validation failed  签发时间验证失败
+	ValidationErrorIssuer        // ISS validation failed  签发者验证失败
+	ValidationErrorNotValidYet   // NBF validation failed  jwt开始时间验证失败
+	ValidationErrorId            // JTI validation failed  签发标识验证失败
 	ValidationErrorClaimsInvalid // Generic claims validation error
 )
 

@@ -8,6 +8,7 @@ import (
 
 // For a type to be a Claims object, it must just have a Valid method that determines
 // if the token is invalid for any supported reason
+// Claims 的对象，它必须有一个Valid方法用来分析token是否有效
 type Claims interface {
 	Valid() error
 }
@@ -15,14 +16,15 @@ type Claims interface {
 // Structured version of Claims Section, as referenced at
 // https://tools.ietf.org/html/rfc7519#section-4.1
 // See examples for how to use this with your own claim types
+// 标准的claims
 type StandardClaims struct {
-	Audience  string `json:"aud,omitempty"`
-	ExpiresAt int64  `json:"exp,omitempty"`
-	Id        string `json:"jti,omitempty"`
-	IssuedAt  int64  `json:"iat,omitempty"`
-	Issuer    string `json:"iss,omitempty"`
-	NotBefore int64  `json:"nbf,omitempty"`
-	Subject   string `json:"sub,omitempty"`
+	Audience  string `json:"aud,omitempty"` // jwt接收者
+	ExpiresAt int64  `json:"exp,omitempty"` // jwt的过期时间，这个过期时间必须要大于签发时间
+	Id        string `json:"jti,omitempty"` // jwt的唯一身份标识，主要用来作为一次性token,从而回避重放攻击。
+	IssuedAt  int64  `json:"iat,omitempty"` // 签发时间
+	Issuer    string `json:"iss,omitempty"` // 签发人
+	NotBefore int64  `json:"nbf,omitempty"` // 定义在什么时间之前，该jwt都是不可用的.
+	Subject   string `json:"sub,omitempty"` // jwt所面向的用户
 }
 
 // Validates time based claims "exp, iat, nbf".
@@ -31,10 +33,11 @@ type StandardClaims struct {
 // be considered a valid claim.
 func (c StandardClaims) Valid() error {
 	vErr := new(ValidationError)
-	now := TimeFunc().Unix()
+	now := TimeFunc().Unix()  // 将jwt-go提供的时间转换为unix时间戳
 
 	// The claims below are optional, by default, so if they are set to the
 	// default value in Go, let's not fail the verification for them.
+	// 验证是否过期
 	if c.VerifyExpiresAt(now, false) == false {
 		delta := time.Unix(now, 0).Sub(time.Unix(c.ExpiresAt, 0))
 		vErr.Inner = fmt.Errorf("token is expired by %v", delta)
