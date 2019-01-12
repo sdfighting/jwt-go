@@ -16,7 +16,7 @@ type Claims interface {
 // Structured version of Claims Section, as referenced at
 // https://tools.ietf.org/html/rfc7519#section-4.1
 // See examples for how to use this with your own claim types
-// 标准的claims
+// 标准的claims章节，更多参考详情请参考 https://tools.ietf.org/html/rfc7519#section-4.1
 type StandardClaims struct {
 	Audience  string `json:"aud,omitempty"` // jwt接收者
 	ExpiresAt int64  `json:"exp,omitempty"` // jwt的过期时间，这个过期时间必须要大于签发时间
@@ -61,37 +61,42 @@ func (c StandardClaims) Valid() error {
 	return vErr
 }
 
-// Compares the aud claim against cmp.
+// Compares the aud claim against cmp. 比较aud和cmp
 // If required is false, this method will return true if the value matches or is unset
+// 如果req是false，在匹配成功和没有设置的情况下该方法将返回true
 func (c *StandardClaims) VerifyAudience(cmp string, req bool) bool {
 	return verifyAud(c.Audience, cmp, req)
 }
 
 // Compares the exp claim against cmp.
 // If required is false, this method will return true if the value matches or is unset
+// 如果req是false，在匹配成功和没有设置的情况下该方法将返回true
 func (c *StandardClaims) VerifyExpiresAt(cmp int64, req bool) bool {
 	return verifyExp(c.ExpiresAt, cmp, req)
 }
 
 // Compares the iat claim against cmp.
 // If required is false, this method will return true if the value matches or is unset
+// 如果req是false，在匹配成功和没有设置的情况下该方法将返回true
 func (c *StandardClaims) VerifyIssuedAt(cmp int64, req bool) bool {
 	return verifyIat(c.IssuedAt, cmp, req)
 }
 
 // Compares the iss claim against cmp.
 // If required is false, this method will return true if the value matches or is unset
+// 如果req是false，在匹配成功和没有设置的情况下该方法将返回true
 func (c *StandardClaims) VerifyIssuer(cmp string, req bool) bool {
 	return verifyIss(c.Issuer, cmp, req)
 }
 
 // Compares the nbf claim against cmp.
 // If required is false, this method will return true if the value matches or is unset
+// 如果req是false，在匹配成功和没有设置的情况下该方法将返回true。req为false表示不强求
 func (c *StandardClaims) VerifyNotBefore(cmp int64, req bool) bool {
 	return verifyNbf(c.NotBefore, cmp, req)
 }
 
-// ----- helpers
+// ----- helpers 助手函数
 
 func verifyAud(aud string, cmp string, required bool) bool {
 	if aud == "" {

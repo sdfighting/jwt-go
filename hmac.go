@@ -9,16 +9,17 @@ import (
 // Implements the HMAC-SHA family of signing methods signing methods
 // Expects key type of []byte for both signing and validation
 type SigningMethodHMAC struct {
-	Name string
-	Hash crypto.Hash
+	Name string // 签名的方法名
+	Hash crypto.Hash // 签名方法
 }
 
 // Specific instances for HS256 and company
+// HS256编码以及合成的具体实例
 var (
 	SigningMethodHS256  *SigningMethodHMAC
 	SigningMethodHS384  *SigningMethodHMAC
 	SigningMethodHS512  *SigningMethodHMAC
-	ErrSignatureInvalid = errors.New("signature is invalid")
+	ErrSignatureInvalid = errors.New("signature is invalid") // 无效的签名方法
 )
 
 func init() {
@@ -41,11 +42,13 @@ func init() {
 	})
 }
 
+// 获取签名的名字
 func (m *SigningMethodHMAC) Alg() string {
 	return m.Name
 }
 
 // Verify the signature of HSXXX tokens.  Returns nil if the signature is valid.
+// 验证某个HS令牌的签名。如果签名有效返回nil
 func (m *SigningMethodHMAC) Verify(signingString, signature string, key interface{}) error {
 	// Verify the key is the right type
 	keyBytes, ok := key.([]byte)

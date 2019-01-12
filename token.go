@@ -27,13 +27,15 @@ type Keyfunc func(*Token) (interface{}, error)
 type Token struct {
 	Raw       string                 // The raw token.  Populated when you Parse a token 客户端传送的原始token  解析token时产生
 	Method    SigningMethod          // The signing method used or to be used  签名算法
-	Header    map[string]interface{} // The first segment of the token  token的头信息
-	Claims    Claims                 // The second segment of the token token的载荷信息
+	Header    map[string]interface{} // The first segment of the token  token的头
+	Claims    Claims                 // The second segment of the token token的载荷 接口类型
 	Signature string                 // The third segment of the token.  Populated when you Parse a token token的签名
 	Valid     bool                   // Is the token valid?  Populated when you Parse/Verify a token token是否有效,解析和验证是赋值
 }
 
 // Create a new Token.  Takes a signing method  实例化token，设置签名使用的算法
+// Claims是一个只包含Valid方法的接口
+// MapClaims 实现了Valid方法，所以可以赋值给Claims
 func New(method SigningMethod) *Token {
 	return NewWithClaims(method, MapClaims{})
 }
@@ -42,11 +44,11 @@ func New(method SigningMethod) *Token {
 func NewWithClaims(method SigningMethod, claims Claims) *Token {
 	return &Token{
 		Header: map[string]interface{}{
-			"typ": "JWT",
-			"alg": method.Alg(),
+			"typ": "JWT", // 这个类型是固定的
+			"alg": method.Alg(), // 签名的算法
 		},
-		Claims: claims,
-		Method: method,
+		Claims: claims, // 数据载荷
+		Method: method, // 签名的方法
 	}
 }
 
@@ -77,10 +79,12 @@ func (t *Token) SigningString() (string, error) {
 	for i, _ := range parts {
 		var jsonValue []byte
 		if i == 0 {
+			// 拼装头Header信息，转成json字符串
 			if jsonValue, err = json.Marshal(t.Header); err != nil {
 				return "", err
 			}
 		} else {
+			 // 拼装 Payload 载荷信息，转成json字符串
 			if jsonValue, err = json.Marshal(t.Claims); err != nil {
 				return "", err
 			}
@@ -88,7 +92,7 @@ func (t *Token) SigningString() (string, error) {
 
 		parts[i] = EncodeSegment(jsonValue)
 	}
-	return strings.Join(parts, "."), nil
+	return strings.Join(parts, "."), nil // 使用"."拼接字符串
 }
 
 // Parse, validate, and return a token. 解析并且验证token
@@ -105,7 +109,9 @@ func ParseWithClaims(tokenString string, claims Claims, keyFunc Keyfunc) (*Token
 }
 
 // Encode JWT specific base64url encoding with padding stripped
+// 使用base64url 编码 JWT
 func EncodeSegment(seg []byte) string {
+	// TrimRight去除尾部的等号
 	return strings.TrimRight(base64.URLEncoding.EncodeToString(seg), "=")
 }
 

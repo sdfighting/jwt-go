@@ -8,6 +8,8 @@ import (
 
 // Claims type that uses the map[string]interface{} for JSON decoding
 // This is the default claims type if you don't supply one
+// Claims 类型使用map[string]interface{}
+// 如果没有提供claims，则使用本类型，如New中使用
 type MapClaims map[string]interface{}
 
 // Compares the aud claim against cmp.
